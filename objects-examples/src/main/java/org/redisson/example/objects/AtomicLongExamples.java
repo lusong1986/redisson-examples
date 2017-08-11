@@ -1,45 +1,48 @@
-/**
- * Copyright 2016 Nikita Koksharov
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.redisson.example.objects;
 
+import org.apache.commons.lang3.RandomUtils;
 import org.redisson.Redisson;
 import org.redisson.api.RAtomicLong;
 import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
 
 public class AtomicLongExamples {
 
-    public static void main(String[] args) {
-        // connects to 127.0.0.1:6379 by default
-        RedissonClient redisson = Redisson.create();
+    public static void main(String[] args) throws InterruptedException {
+	String[] nodeAddresses = { "172.16.59.113:46321",
+		"172.16.59.114:46321", "172.16.59.115:46321",
+		"172.16.59.116:46321", "172.16.59.117:46321",
+		"172.16.59.118:46321", "172.16.59.119:46321",
+		"172.16.57.97:46321" };
+	Config config = new Config();
+	config.useClusterServers().setMasterConnectionPoolSize(20)
+		.addNodeAddress(nodeAddresses);
+	RedissonClient redisson = Redisson.create(config);
+	try {
+	    RAtomicLong atomicLong = redisson.getAtomicLong("myLong");
+	    atomicLong.delete();
+	    atomicLong.getAndDecrement();
+	    atomicLong.getAndIncrement();
+	    System.out.println(atomicLong.get());
 
-        RAtomicLong atomicLong = redisson.getAtomicLong("myLong");
-        atomicLong.getAndDecrement();
-        atomicLong.getAndIncrement();
-        
-        atomicLong.addAndGet(10L);
-        atomicLong.compareAndSet(29, 412);
-        
-        atomicLong.decrementAndGet();
-        atomicLong.incrementAndGet();
-        
-        atomicLong.getAndAdd(302);
-        atomicLong.getAndDecrement();
-        atomicLong.getAndIncrement();
-        
-        redisson.shutdown();
+	    atomicLong.addAndGet(10L);
+	    atomicLong.compareAndSet(29, 412);
+	    System.out.println(atomicLong.get());
+
+	    atomicLong.decrementAndGet();
+	    atomicLong.incrementAndGet();
+	    System.out.println(atomicLong.get());
+
+	    atomicLong.getAndAdd(302);
+	    atomicLong.getAndDecrement();
+	    atomicLong.getAndIncrement();
+	    System.out.println(atomicLong.get());
+	} catch (Exception e) {
+	    e.printStackTrace();
+	} finally {
+	    // redisson.shutdown(); 调用会抛出 cannot be started once stopped
+	}
+	System.out.println("finish");
     }
-    
+
 }
