@@ -22,25 +22,36 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.lang3.RandomUtils;
 import org.redisson.Redisson;
 import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
 
 public class MapExamples {
 
     public static void main(String[] args) throws IOException {
-        // connects to 127.0.0.1:6379 by default
-        RedissonClient redisson = Redisson.create();
+		String[] nodeAddresses = { "172.16.59.113:46321", "172.16.59.114:46321", "172.16.59.115:46321",
+				"172.16.59.116:46321", "172.16.59.117:46321", "172.16.59.118:46321", "172.16.59.119:46321",
+				"172.16.57.97:46321" };
+		Config config = new Config();
+		config.useClusterServers().setScanInterval(2000)
+				.setClientName("cluster" + RandomUtils.nextDouble(10.00, 10000000000.00)).setConnectTimeout(3000)
+				.setIdleConnectionTimeout(10000).setPingTimeout(2000).setTimeout(5000).setMasterConnectionPoolSize(20)
+				.addNodeAddress(nodeAddresses);
+		RedissonClient redisson = Redisson.create(config);
         
-        RMap<String, Integer> map =  redisson.getMap("myMap");
+        RMap<String, Integer> map =  redisson.getMap("myMap"+ RandomUtils.nextDouble(10.00, 10000000000.00));
         map.put("a", 1);
         map.put("b", 2);
         map.put("c", 3);
+        System.out.println(map);
         
         boolean contains = map.containsKey("a");
         
         Integer value = map.get("c");
         Integer updatedValue = map.addAndGet("a", 32);
+        System.out.println(updatedValue);
         
         Integer valueSize = map.valueSize("c");
         
@@ -49,18 +60,24 @@ public class MapExamples {
         keys.add("b");
         keys.add("c");
         Map<String, Integer> mapSlice = map.getAll(keys);
+        System.out.println(mapSlice);
         
         // use read* methods to fetch all objects
         Set<String> allKeys = map.readAllKeySet();
         Collection<Integer> allValues = map.readAllValues();
         Set<Entry<String, Integer>> allEntries = map.readAllEntrySet();
+        System.out.println(allKeys);
         
         // use fast* methods when previous value is not required
         boolean isNewKey = map.fastPut("a", 100);
+        System.out.println(isNewKey);
         boolean isNewKeyPut = map.fastPutIfAbsent("d", 33);
+        System.out.println(isNewKeyPut);
         long removedAmount = map.fastRemove("b");
+        System.out.println(removedAmount);
         
-        redisson.shutdown();
+        System.out.println(map.readAllEntrySet());
+        
     }
     
 }
