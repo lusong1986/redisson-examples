@@ -49,7 +49,7 @@ public class AtomicDoubleExamples {
 	    atomicDouble.compareAndSet(29.4, 412.91);
 	    System.out.println(atomicDouble.get());
 
-//	    atomicDouble.decrementAndGet(); 执行这个方法会抛出 ERR value is not an integer or out of range
+	    //atomicDouble.decrementAndGet(); //执行这个方法会抛出 ERR value is not an integer or out of range
 	    atomicDouble.incrementAndGet();
 	    System.out.println(atomicDouble.get());
 
@@ -60,7 +60,7 @@ public class AtomicDoubleExamples {
 	} catch (Exception e) {
 	    e.printStackTrace();
 	} finally {
-	    // redisson.shutdown();
+	     redisson.shutdown();
 	}
 
     }

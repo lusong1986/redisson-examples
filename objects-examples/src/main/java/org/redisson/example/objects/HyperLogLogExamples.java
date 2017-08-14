@@ -59,7 +59,7 @@ public class HyperLogLogExamples {
 	hyperLogLog2.mergeWith(hyperLogLog1.getName());
 	hyperLogLog2.countWith(hyperLogLog1.getName());
 
-	//redisson.shutdown();
+	redisson.shutdown();
     }
 
 }

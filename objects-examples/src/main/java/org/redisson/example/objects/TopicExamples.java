@@ -28,7 +28,7 @@ public class TopicExamples {
         // connects to 127.0.0.1:6379 by default
         RedissonClient redisson = Redisson.create();
 
-        CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch = new CountDownLatch(1);
         
         RTopic<String> topic = redisson.getTopic("topic2");
         topic.addListener(new MessageListener<String>() {

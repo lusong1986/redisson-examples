@@ -42,7 +42,7 @@ public class AtomicLongExamples {
 	} catch (Exception e) {
 	    e.printStackTrace();
 	} finally {
-	    // redisson.shutdown(); 调用会抛出 cannot be started once stopped
+	    redisson.shutdown(); 
 	}
 	System.out.println("finish");
     }

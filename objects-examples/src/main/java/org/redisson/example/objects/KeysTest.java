@@ -31,7 +31,7 @@ public class KeysTest {
 	 System.out.println(it.next());
 	 }
 
-
+	 redisson.shutdown();
 
     }
 

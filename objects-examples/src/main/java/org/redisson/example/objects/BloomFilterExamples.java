@@ -54,7 +54,7 @@ public class BloomFilterExamples {
 
 	System.out.println(bloomFilter.count());
 
-	// redisson.shutdown();
+	redisson.shutdown();
     }
 
 }
