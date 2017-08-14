@@ -31,7 +31,7 @@ public class BlockingDequeExamples {
         // connects to 127.0.0.1:6379 by default
         RedissonClient redisson = Redisson.create();
 
-        RBlockingDeque<String> deque = redisson.getBlockingDeque("myQueue");
+        final RBlockingDeque<String> deque = redisson.getBlockingDeque("myQueue");
         deque.add("1");
         deque.add("2");
         deque.add("3");
@@ -55,7 +55,7 @@ public class BlockingDequeExamples {
         secondList.add("5");
         deque.addAll(secondList);
 
-        RQueue<String> secondQueue = redisson.getQueue("mySecondQueue");
+        final RQueue<String> secondQueue = redisson.getQueue("mySecondQueue");
         
         deque.pollLastAndOfferFirstTo(secondQueue.getName());
         
@@ -75,26 +75,32 @@ public class BlockingDequeExamples {
         String lastRemoved = deque.removeLast();
         
         
-        Thread t = new Thread(() -> {
-            try {
-                String element1 = deque.poll(10, TimeUnit.SECONDS);
-                
-                String element2 = deque.take();
-                
-                String element3 = deque.pollFirst(3, TimeUnit.SECONDS);
-                
-                String element4 = deque.pollLast(3, TimeUnit.SECONDS);
-                
-                String element5 = deque.takeFirst();
-                
-                String element6 = deque.takeLast();
-                
-                String element7 = deque.pollLastAndOfferFirstTo(secondQueue.getName(), 4, TimeUnit.SECONDS);
-                
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
+        Thread t = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+
+	            try {
+	                String element1 = deque.poll(10, TimeUnit.SECONDS);
+	                
+	                String element2 = deque.take();
+	                
+	                String element3 = deque.pollFirst(3, TimeUnit.SECONDS);
+	                
+	                String element4 = deque.pollLast(3, TimeUnit.SECONDS);
+	                
+	                String element5 = deque.takeFirst();
+	                
+	                String element6 = deque.takeLast();
+	                
+	                String element7 = deque.pollLastAndOfferFirstTo(secondQueue.getName(), 4, TimeUnit.SECONDS);
+	                
+	            } catch (InterruptedException e) {
+	                e.printStackTrace();
+	            }
+	        				
+			}
+		});
         
         t.start();
         t.join();

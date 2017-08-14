@@ -25,7 +25,7 @@ public class BoundedBlockingQueueExamples {
         // connects to 127.0.0.1:6379 by default
         RedissonClient redisson = Redisson.create();
 
-        RBoundedBlockingQueue<String> queue = redisson.getBoundedBlockingQueue("myQueue");
+      final  RBoundedBlockingQueue<String> queue = redisson.getBoundedBlockingQueue("myQueue");
         queue.add("1");
         queue.add("2");
         queue.add("3");
@@ -34,14 +34,18 @@ public class BoundedBlockingQueueExamples {
         
         queue.trySetCapacity(5);
         
-        Thread t = new Thread(() -> {
-            try {
-                String element = queue.take();
-                
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
+        Thread t = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+	            try {
+	                String element = queue.take();
+	                
+	            } catch (InterruptedException e) {
+	                e.printStackTrace();
+	            }				
+			}
+		});
         
         t.start();
         
