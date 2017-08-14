@@ -28,7 +28,7 @@ public class FairLockExamples {
         // connects to 127.0.0.1:6379 by default
         RedissonClient redisson = Redisson.create();
         
-        RLock lock = redisson.getFairLock("test");
+       final RLock lock = redisson.getFairLock("test");
 
         int size = 10;
         List<Thread> threads = new ArrayList<Thread>();

@@ -25,7 +25,7 @@ public class LockExamples {
 
     public static void main(String[] args) throws InterruptedException {
         // connects to 127.0.0.1:6379 by default
-        RedissonClient redisson = Redisson.create();
+	final RedissonClient redisson = Redisson.create();
         
         RLock lock = redisson.getLock("lock");
         lock.lock(2, TimeUnit.SECONDS);

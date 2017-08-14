@@ -28,9 +28,9 @@ public class RedLockExamples {
         RedissonClient client1 = Redisson.create();
         RedissonClient client2 = Redisson.create();
         
-        RLock lock1 = client1.getLock("lock1");
-        RLock lock2 = client1.getLock("lock2");
-        RLock lock3 = client2.getLock("lock3");
+        final RLock lock1 = client1.getLock("lock1");
+        final  RLock lock2 = client1.getLock("lock2");
+        final RLock lock3 = client2.getLock("lock3");
         
         Thread t1 = new Thread() {
             public void run() {

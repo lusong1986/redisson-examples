@@ -26,9 +26,9 @@ public class MultiLockExamples {
         // connects to 127.0.0.1:6379 by default
         RedissonClient client = Redisson.create();
         
-        RLock lock1 = client.getLock("lock1");
-        RLock lock2 = client.getLock("lock2");
-        RLock lock3 = client.getLock("lock3");
+        final  RLock lock1 = client.getLock("lock1");
+        final RLock lock2 = client.getLock("lock2");
+        final RLock lock3 = client.getLock("lock3");
         
         Thread t = new Thread() {
             public void run() {
