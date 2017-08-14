@@ -15,7 +15,6 @@
  */
 package org.redisson.example.objects;
 
-import org.apache.commons.lang3.RandomUtils;
 import org.redisson.Redisson;
 import org.redisson.api.RBloomFilter;
 import org.redisson.api.RedissonClient;
@@ -24,41 +23,38 @@ import org.redisson.config.Config;
 public class BloomFilterExamples {
 
     public static void main(String[] args) {
-	String[] nodeAddresses = { "172.16.59.113:46321",
-		"172.16.59.114:46321", "172.16.59.115:46321",
-		"172.16.59.116:46321", "172.16.59.117:46321",
-		"172.16.59.118:46321", "172.16.59.119:46321",
-		"172.16.57.97:46321" };
+	String[] nodeAddresses = { "redis://172.16.59.113:46321",
+		"redis://172.16.59.114:46321", "redis://172.16.59.115:46321",
+		"redis://172.16.59.116:46321", "redis://172.16.59.117:46321",
+		"redis://172.16.59.118:46321", "redis://172.16.59.119:46321",
+		"redis://172.16.57.97:46321" };
 	Config config = new Config();
-	config.useClusterServers()
-		.setScanInterval(2000)
-		.setClientName(
-			"cluster"
-				+ RandomUtils.nextDouble(10.00, 10000000000.00))
+	config.useClusterServers().setScanInterval(2000)
 		.setConnectTimeout(3000).setIdleConnectionTimeout(10000)
 		.setPingTimeout(2000).setTimeout(5000)
 		.setMasterConnectionPoolSize(20).addNodeAddress(nodeAddresses);
 	RedissonClient redisson = Redisson.create(config);
 
-        RBloomFilter<String> bloomFilter = redisson.getBloomFilter("bloomFilter");
-        bloomFilter.tryInit(100_000_000, 0.03);
-        
-        System.out.println(100_000_000);
-        
-        bloomFilter.add("a");
-        bloomFilter.add("b");
-        bloomFilter.add("c");
-        bloomFilter.add("d");
-        
-        System.out.println(bloomFilter.getExpectedInsertions());
-        System.out.println(bloomFilter.getFalseProbability());
-        System.out.println(bloomFilter.getHashIterations());
-        
-        System.out.println(bloomFilter.contains("a"));
-        
-        System.out.println(bloomFilter.count());
-        
-        //redisson.shutdown();
+	RBloomFilter<String> bloomFilter = redisson
+		.getBloomFilter("bloomFilter");
+	bloomFilter.tryInit(100_000_000, 0.03);
+
+	System.out.println(100_000_000);
+
+	bloomFilter.add("a");
+	bloomFilter.add("b");
+	bloomFilter.add("c");
+	bloomFilter.add("d");
+
+	System.out.println(bloomFilter.getExpectedInsertions());
+	System.out.println(bloomFilter.getFalseProbability());
+	System.out.println(bloomFilter.getHashIterations());
+
+	System.out.println(bloomFilter.contains("a"));
+
+	System.out.println(bloomFilter.count());
+
+	// redisson.shutdown();
     }
-    
+
 }
