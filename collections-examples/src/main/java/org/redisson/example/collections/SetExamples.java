@@ -24,14 +24,12 @@ import org.redisson.config.Config;
 public class SetExamples {
 
 	public static void main(String[] args) {
-		String[] nodeAddresses = { "172.16.59.113:46321", "172.16.59.114:46321", "172.16.59.115:46321",
-				"172.16.59.116:46321", "172.16.59.117:46321", "172.16.59.118:46321", "172.16.59.119:46321",
-				"172.16.57.97:46321" };
+		String[] nodeAddresses = { "redis://172.16.59.113:46321", "redis://172.16.59.114:46321",
+				"redis://172.16.59.115:46321", "redis://172.16.59.116:46321", "redis://172.16.59.117:46321",
+				"redis://172.16.59.118:46321", "redis://172.16.59.119:46321", "redis://172.16.57.97:46321" };
 		Config config = new Config();
-		config.useClusterServers().setScanInterval(2000)
-				.setClientName("cluster" + RandomUtils.nextDouble(10.00, 10000000000.00)).setConnectTimeout(3000)
-				.setIdleConnectionTimeout(10000).setPingTimeout(2000).setTimeout(5000).setMasterConnectionPoolSize(20)
-				.addNodeAddress(nodeAddresses);
+		config.useClusterServers().setScanInterval(2000).setConnectTimeout(3000).setIdleConnectionTimeout(10000)
+				.setPingTimeout(2000).setTimeout(5000).setMasterConnectionPoolSize(20).addNodeAddress(nodeAddresses);
 		RedissonClient redisson = Redisson.create(config);
 
 		RSet<String> set = redisson.getSet("mySet" + RandomUtils.nextDouble(10.00, 10000000000.00));
@@ -39,7 +37,7 @@ public class SetExamples {
 		set.add("2");
 		set.add("3");
 
-		set.contains("1");
+		System.out.println(set.contains("1"));
 
 		for (String string : set) {
 			System.out.println(string);
@@ -81,7 +79,7 @@ public class SetExamples {
 		Set<String> allValues = set.readAll();
 		System.out.println(allValues);
 
-		// redisson.shutdown();
+		redisson.shutdown();
 	}
 
 }
