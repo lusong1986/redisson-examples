@@ -18,17 +18,25 @@ package org.redisson.example.collections;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.redisson.Redisson;
 import org.redisson.api.RScoredSortedSet;
 import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
 
 public class ScoredSortedSetExamples {
 
     public static void main(String[] args) {
         // connects to 127.0.0.1:6379 by default
-        RedissonClient redisson = Redisson.create();
+		String[] nodeAddresses = { "redis://172.16.59.113:46321", "redis://172.16.59.114:46321",
+				"redis://172.16.59.115:46321", "redis://172.16.59.116:46321", "redis://172.16.59.117:46321",
+				"redis://172.16.59.118:46321", "redis://172.16.59.119:46321", "redis://172.16.57.97:46321" };
+		Config config = new Config();
+		config.useClusterServers().setScanInterval(2000).setConnectTimeout(3000).setIdleConnectionTimeout(10000)
+				.setPingTimeout(2000).setTimeout(5000).setMasterConnectionPoolSize(20).addNodeAddress(nodeAddresses);
+		RedissonClient redisson = Redisson.create(config);
         
         RScoredSortedSet<String> set = redisson.getScoredSortedSet("mySortedSet");
         set.add(10, "1");
@@ -37,6 +45,7 @@ public class ScoredSortedSetExamples {
         
         for (String string : set) {
             // iteration through bulk loaded values
+        	System.out.println(string);
         }
         
         Map<String, Double> newValues = new HashMap<>();
@@ -46,6 +55,14 @@ public class ScoredSortedSetExamples {
         Long newValuesAmount = set.addAll(newValues);
         
         Double scoreResult = set.addScore("2", 10);
+        
+        Collection<String> allValues = set.readAll();
+        for (Iterator iterator = allValues.iterator(); iterator.hasNext();) {
+			String string = (String) iterator.next();
+			System.out.println(set.getScore(string));
+			
+		}
+        
         set.contains("4");
         set.containsAll(Arrays.asList("3", "4", "5"));
         
@@ -56,7 +73,7 @@ public class ScoredSortedSetExamples {
         String polledLast = set.pollLast();
 
         // use read method to fetch all objects
-        Collection<String> allValues = set.readAll();
+        allValues = set.readAll();
         
         redisson.shutdown();
     }
