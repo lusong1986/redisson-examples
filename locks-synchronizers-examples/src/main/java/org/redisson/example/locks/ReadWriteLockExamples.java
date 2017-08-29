@@ -15,39 +15,52 @@
  */
 package org.redisson.example.locks;
 
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
 import org.redisson.Redisson;
 import org.redisson.api.RLock;
 import org.redisson.api.RReadWriteLock;
 import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
 
 public class ReadWriteLockExamples {
 
     public static void main(String[] args) throws InterruptedException {
-        // connects to 127.0.0.1:6379 by default
-        RedissonClient redisson = Redisson.create();
+		String[] nodeAddresses = { "redis://172.16.59.113:46321", "redis://172.16.59.114:46321",
+				"redis://172.16.59.115:46321", "redis://172.16.59.116:46321", "redis://172.16.59.117:46321",
+				"redis://172.16.59.118:46321", "redis://172.16.59.119:46321", "redis://172.16.57.97:46321" };
+		Config config = new Config();
+		config.useClusterServers().setScanInterval(2000).setConnectTimeout(3000).setIdleConnectionTimeout(10000)
+				.setPingTimeout(2000).setTimeout(5000).setMasterConnectionPoolSize(20).addNodeAddress(nodeAddresses);
+		final RedissonClient redisson = Redisson.create(config);
 
-        final RReadWriteLock lock = redisson.getReadWriteLock("lock");
+        final RReadWriteLock lock = redisson.getReadWriteLock("lock" +new Random().nextFloat());
 
-        lock.writeLock().tryLock();
-
+        lock.writeLock().tryLock(5000L,TimeUnit.MILLISECONDS);
+		System.out.println(">>>>>>>1 write locked");
+        
         Thread t = new Thread() {
             public void run() {
                  RLock r = lock.readLock();
                  r.lock();
+         		System.out.println(">>>>>>>1 read locked");
 
                  try {
-                    Thread.sleep(1000);
+                    Thread.sleep(3000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 r.unlock();
+                System.out.println(">>>>>>>1 read unlocked");
             };
         };
 
         t.start();
-        t.join();
+        t.join(1000);
 
         lock.writeLock().unlock();
+		System.out.println(">>>>>>>1 write unlocked");
 
         t.join();
         

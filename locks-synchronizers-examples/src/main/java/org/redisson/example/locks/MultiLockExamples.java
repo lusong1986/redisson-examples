@@ -19,12 +19,18 @@ import org.redisson.Redisson;
 import org.redisson.RedissonMultiLock;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
 
 public class MultiLockExamples {
 
     public static void main(String[] args) throws InterruptedException {
-        // connects to 127.0.0.1:6379 by default
-        RedissonClient client = Redisson.create();
+		String[] nodeAddresses = { "redis://172.16.59.113:46321", "redis://172.16.59.114:46321",
+				"redis://172.16.59.115:46321", "redis://172.16.59.116:46321", "redis://172.16.59.117:46321",
+				"redis://172.16.59.118:46321", "redis://172.16.59.119:46321", "redis://172.16.57.97:46321" };
+		Config config = new Config();
+		config.useClusterServers().setScanInterval(2000).setConnectTimeout(3000).setIdleConnectionTimeout(10000)
+				.setPingTimeout(2000).setTimeout(5000).setMasterConnectionPoolSize(20).addNodeAddress(nodeAddresses);
+		final RedissonClient client = Redisson.create(config);
         
         final  RLock lock1 = client.getLock("lock1");
         final RLock lock2 = client.getLock("lock2");
@@ -34,6 +40,7 @@ public class MultiLockExamples {
             public void run() {
                 RedissonMultiLock lock = new RedissonMultiLock(lock1, lock2, lock3);
                 lock.lock();
+        		System.out.println(">>>>>>>1 multi locked");
                 
                 try {
                     Thread.sleep(3000);
@@ -41,6 +48,7 @@ public class MultiLockExamples {
                 }
                 
                 lock.unlock();
+          		System.out.println(">>>>>>>1 multi unlocked");
             };
         };
         t.start();
@@ -48,7 +56,9 @@ public class MultiLockExamples {
 
         RedissonMultiLock lock = new RedissonMultiLock(lock1, lock2, lock3);
         lock.lock();
+		System.out.println(">>>>>>>2 multi locked");
         lock.unlock();
+        System.out.println(">>>>>>>2 multi unlocked");
     }
     
 }
