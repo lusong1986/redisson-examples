@@ -22,7 +22,9 @@ public class KeysTest {
 	config.useClusterServers().setScanInterval(2000)
 	.setConnectTimeout(3000).setIdleConnectionTimeout(10000)
 		.setPingTimeout(2000).setTimeout(5000)
-		.setMasterConnectionPoolSize(20).addNodeAddress(nodeAddresses);
+		.setMasterConnectionMinimumIdleSize(10)
+		.setMasterConnectionPoolSize(20)
+		.addNodeAddress(nodeAddresses);
 	RedissonClient redisson = Redisson.create(config);
 
 	 RKeys keys = redisson.getKeys();
