@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 import org.redisson.Redisson;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
+import org.redisson.client.codec.ByteArrayCodec;
 import org.redisson.config.Config;
 
 public class BucketStringExamples {
@@ -29,6 +30,11 @@ public class BucketStringExamples {
 				.setMasterConnectionPoolSize(20).addNodeAddress(nodeAddresses);
 		RedissonClient redisson = Redisson.create(config);
 
+		
+		
+        RBucket<Object> rBucket = redisson.getBucket("a111aa", ByteArrayCodec.INSTANCE);
+        System.out.println(rBucket);
+		
 		RBucket<String> bucket = redisson.getBucket("test");
 		bucket.set("123");
 		System.out.println(bucket.get());
