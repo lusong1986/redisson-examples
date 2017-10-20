@@ -1,0 +1,17 @@
+			<plugin>
+		        <groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-pmd-plugin</artifactId>
+		         <version>3.8</version>
+			</plugin>     
+			
+			<plugin>
+				<groupId>org.codehaus.sonar</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>4.5.1</version>
+			</plugin>       
+			
+			
+			
+			
+			mvn sonar:sonar
+			mvn pmd:pmd
